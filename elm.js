@@ -10319,82 +10319,62 @@ Elm.StartApp.Simple.make = function (_elm) {
    var Config = F3(function (a,b,c) {    return {model: a,view: b,update: c};});
    return _elm.StartApp.Simple.values = {_op: _op,Config: Config,start: start};
 };
-Elm.Counter = Elm.Counter || {};
-Elm.Counter.make = function (_elm) {
+Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
    "use strict";
-   _elm.Counter = _elm.Counter || {};
-   if (_elm.Counter.values) return _elm.Counter.values;
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values) return _elm.Main.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $StartApp$Simple = Elm.StartApp.Simple.make(_elm);
+   $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
+   $String = Elm.String.make(_elm);
    var _op = {};
    var update = F2(function (action,model) {
       var _p0 = action;
       switch (_p0.ctor)
-      {case "Increment": return model + 1;
-         case "Decrement": return model - 1;
-         default: return model * 2;}
+      {case "Upper": return _U.update(model,{value: $String.toUpper(model.value)});
+         case "Lower": return _U.update(model,{value: $String.toLower(model.value)});
+         case "Reverse": return _U.update(model,{value: $String.reverse(model.value)});
+         default: return _U.update(model,{value: _p0._0});}
    });
-   var Double = {ctor: "Double"};
-   var Decrement = {ctor: "Decrement"};
-   var Increment = {ctor: "Increment"};
+   var init = function (value) {    return {value: value};};
+   var Change = function (a) {    return {ctor: "Change",_0: a};};
+   var Reverse = {ctor: "Reverse"};
+   var Lower = {ctor: "Lower"};
+   var Upper = {ctor: "Upper"};
+   var onInput = F2(function (address,f) {
+      return A3($Html$Events.on,"input",$Html$Events.targetValue,function (v) {    return A2($Signal.message,address,f(v));});
+   });
    var view = F2(function (address,model) {
       return A2($Html.div,
       _U.list([]),
-      _U.list([A2($Html.button,_U.list([A2($Html$Events.onClick,address,Decrement)]),_U.list([$Html.text("--")]))
-              ,A2($Html.div,_U.list([]),_U.list([$Html.text($Basics.toString(model))]))
-              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,Increment)]),_U.list([$Html.text("++")]))
-              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,Double)]),_U.list([$Html.text("Double")]))]));
+      _U.list([A2($Html.input,
+              _U.list([$Html$Attributes.type$("text"),$Html$Attributes.value(model.value),$Html$Attributes.name("value"),A2(onInput,address,Change)]),
+              _U.list([]))
+              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,Reverse)]),_U.list([$Html.text("Reverse")]))
+              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,Upper)]),_U.list([$Html.text("Upper")]))
+              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,Lower)]),_U.list([$Html.text("Lower")]))
+              ,A2($Html.span,_U.list([]),_U.list([$Html.text(model.value)]))]));
    });
-   var model = 1;
-   var main = $StartApp$Simple.start({model: model,update: update,view: view});
-   var init = function (counter) {    return counter;};
-   return _elm.Counter.values = {_op: _op,init: init,update: update,view: view};
-};
-Elm.PairCounter = Elm.PairCounter || {};
-Elm.PairCounter.make = function (_elm) {
-   "use strict";
-   _elm.PairCounter = _elm.PairCounter || {};
-   if (_elm.PairCounter.values) return _elm.PairCounter.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Counter = Elm.Counter.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $StartApp$Simple = Elm.StartApp.Simple.make(_elm);
-   var _op = {};
-   var Bottom = function (a) {    return {ctor: "Bottom",_0: a};};
-   var Top = function (a) {    return {ctor: "Top",_0: a};};
-   var Reset = {ctor: "Reset"};
-   var view = F2(function (address,model) {
-      return A2($Html.div,
-      _U.list([]),
-      _U.list([A2($Counter.view,A2($Signal.forwardTo,address,Top),model.topCounter)
-              ,A2($Counter.view,A2($Signal.forwardTo,address,Bottom),model.bottomCounter)
-              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,Reset)]),_U.list([$Html.text("Reset")]))]));
-   });
-   var init = F2(function (top,bottom) {    return {topCounter: $Counter.init(top),bottomCounter: $Counter.init(bottom)};});
-   var model = A2(init,10,20);
-   var update = F2(function (action,model) {
-      var _p0 = action;
-      switch (_p0.ctor)
-      {case "Reset": return A2(init,0,0);
-         case "Top": return _U.update(model,{topCounter: A2($Counter.update,_p0._0,model.topCounter)});
-         default: return _U.update(model,{bottomCounter: A2($Counter.update,_p0._0,model.bottomCounter)});}
-   });
-   var main = $StartApp$Simple.start({model: model,update: update,view: view});
-   var Model = F2(function (a,b) {    return {topCounter: a,bottomCounter: b};});
-   return _elm.PairCounter.values = {_op: _op,Model: Model,init: init,model: model,Reset: Reset,Top: Top,Bottom: Bottom,update: update,view: view,main: main};
+   var main = $StartApp$Simple.start({update: update,view: view,model: init("Jannine Weigel")});
+   var Model = function (a) {    return {value: a};};
+   return _elm.Main.values = {_op: _op
+                             ,Model: Model
+                             ,onInput: onInput
+                             ,Upper: Upper
+                             ,Lower: Lower
+                             ,Reverse: Reverse
+                             ,Change: Change
+                             ,init: init
+                             ,update: update
+                             ,view: view
+                             ,main: main};
 };
